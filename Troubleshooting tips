@@ -1,0 +1,54 @@
+🛠️ Troubleshooting Tips
+1. Terraform Plugin Issues
+
+Problem: Required plugins are not installed.
+
+Solution: Run terraform init to download required providers.
+
+2. Kubernetes Cluster Not Responding
+
+Problem: kubectl get nodes shows errors.
+
+Solution: Run:
+
+gcloud container clusters get-credentials demo-gke-cluster \
+--zone us-central1-a --project dark-caldron-476422-v9
+
+3. Service External IP Pending
+
+Problem: LoadBalancer EXTERNAL-IP is <pending>.
+
+Solution: Wait a few minutes or check firewall rules and IP quota.
+
+4. Git Push Issues (Large Files / Secrets)
+
+Problem: GitHub rejects push due to large files or secrets.
+
+Solution:
+
+rm -rf .terraform
+echo ".terraform/" >> .gitignore
+git filter-branch --force --index-filter \
+  "git rm --cached --ignore-unmatch <secret-file>" \
+  --prune-empty --tag-name-filter cat -- --all
+echo "dark-caldron-476422-v9-4e5474f8e888.json" >> .gitignore
+
+
+Use GitHub Personal Access Token (PAT) instead of password.
+
+5. Terraform Destroy Errors
+
+Ensure credentials are valid and run:
+
+terraform destroy -var="project_id=<PROJECT_ID>" \
+-var="credentials_file=<CREDENTIALS_FILE>" \
+-var="region=<REGION>" \
+-var="zone=<ZONE>"
+
+6. General Tips
+
+Always run terraform plan first to preview changes.
+
+Never commit service account credentials or .tfstate files to GitHub.
+
+Use .gitignore to prevent sensitive files from being tracked.
